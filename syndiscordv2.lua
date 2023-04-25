@@ -1,6 +1,4 @@
-if not syn or not syn.websocket then
-    return game.Players.LocalPlayer:Kick('Your exploit does not support websockets.')
-end
+
 
 local SynDiscord = {
     Client = {},
