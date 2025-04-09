@@ -15,7 +15,7 @@ do -- Client Functions
         local Client = setmetatable({}, SynDiscord.Client)
         Client.__meta__ = {
             EventListeners = {};
-            WebsocketClient = syn.websocket.connect(SynDiscord.WEBSOCKET_SERVER);
+            WebsocketClient = Websocket.connect(SynDiscord.WEBSOCKET_SERVER);
         }
         Client:StartEventLoop()
         return Client
