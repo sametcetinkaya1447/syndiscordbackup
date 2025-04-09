@@ -110,16 +110,41 @@ do -- Client Functions
                     end
 
                     function message.react(emoji)
-                        local emoji_urlencoded = game:GetService("HttpService"):UrlEncode(emoji)
+                        local HttpService = game:GetService("HttpService")
+                        local emoji_urlencoded = HttpService:UrlEncode(emoji)
+                        local url = SynDiscord.API_ROOT .. string.format(
+                            'channels/%s/messages/%s/reactions/%s/%%40me',
+                            message.channel_id,
+                            message.id,
+                            emoji_urlencoded
+                        )
+                        
+                        print("[DEBUG] React URL:", url)
+                        
                         local res = self:Request({
-                            Url = SynDiscord.API_ROOT .. string.format('channels/%s/messages/%s/reactions/%s/%%40me', message.channel_id, message.id, emoji_urlencoded),
+                            Url = url,
                             Method = 'PUT',
                             Headers = {
-                                ['Content-Type'] = 'application/json'  
+                                ['Content-Type'] = 'application/json'
                             }
                         })
+                        
+                        -- Debug the response
+                        if res.StatusCode then
+                            print("[DEBUG] React Status Code:", res.StatusCode)
+                        else
+                            print("[DEBUG] No status code in response")
+                        end
+                        
+                        if res.StatusCode and res.StatusCode ~= 204 then
+                            print("[DEBUG] React Response Body (error):", res.Body)
+                        else
+                            print("[DEBUG] Reaction added successfully (or 204 no content returned).")
+                        end
+                    
                         return res.Body
                     end
+                    
 
                     function message.delete()
                         local res = self:Request({
