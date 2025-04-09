@@ -34,18 +34,19 @@ do -- Client Functions
     end
 
     function SynDiscord.Client:login(token)
-        local BOT_RES = SynDiscord.Utils:JSONDecode(syn.request({
+        local BOT_RES = SynDiscord.Utils:JSONDecode(request({
             Url = 'https://discord.com/api/v9/users/@me',
             Headers = {
                 Authorization = 'Bot ' .. token
             }
         }).Body)
+    
         if BOT_RES.bot == true then
             self.User = { Token = 'Bot ' .. token }
         else
             self.User = { Token = token }
         end
-        
+    
         self.__meta__.WebsocketClient:Send(SynDiscord.Utils:JSONEncode({
             op = 2,
             d = {
@@ -57,20 +58,17 @@ do -- Client Functions
                 }
             }
         }))
+    
         return self.User
     end
-
+    
     function SynDiscord.Client:Request(Tbl)
-        if Tbl == nil or typeof(Tbl) ~= 'table' or Tbl.Url == nil then
-            return
-        end
-        if Tbl.Headers == nil then
-            Tbl.Headers = {}
-        end
+        if Tbl == nil or typeof(Tbl) ~= 'table' or Tbl.Url == nil then return end
+        Tbl.Headers = Tbl.Headers or {}
         Tbl.Headers['Authorization'] = self.User.Token
-        return syn.request(Tbl)
+        return request(Tbl)
     end
-
+    
     function SynDiscord.Client:StartEventLoop()
         local client = self.__meta__.WebsocketClient
 
